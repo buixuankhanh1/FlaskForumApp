@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Trang Chủ Diễn Đàn{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Bài Viết Gần Đây</h1>
+{% if posts %}
+<div class="row">
+    {% for post in posts %}
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></h5>
+                <h6 class="card-subtitle mb-2 text-muted">Đăng bởi: {{ post.author }}</h6>
+                <p class="card-text">{{ post.content[:150] }}...</p> {# Hiển thị đoạn trích nội dung #}
+
+                {% if post.media_urls %}
+                {% set first_media_url = post.media_urls[0] %} {# Lấy phần tử đầu tiên #}
+                {% if first_media_url.endswith(('.png', '.jpg', '.jpeg', '.gif')) %}
+                <img src="{{ first_media_url }}" class="img-fluid mb-2" alt="Media"
+                    style="max-height: 200px; width: auto; display: block; margin: auto;">
+                {% elif first_media_url.endswith(('.mp4', '.mov')) %}
+                {# Bạn có thể chọn hiển thị video đầu tiên nếu muốn, hoặc bỏ qua #}
+                {# Để đơn giản cho trang chủ, chúng ta thường chỉ hiển thị ảnh hoặc thumbnail của video #}
+                {# Hiện tại tôi chỉ hiển thị ảnh, nếu là video thì sẽ bỏ qua để giữ trang chủ gọn gàng #}
+                {% endif %}
+                {% endif %}
+                <a href="{{ url_for('post_detail', post_id=post.id) }}" class="btn btn-primary btn-sm mt-2">Xem chi
+                    tiết</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>Chưa có bài viết nào. Hãy là người đầu tiên đăng bài!</p>
+{% endif %}
+{% endblock %}

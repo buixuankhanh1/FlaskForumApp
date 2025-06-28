@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="post-container">
+    <h1 class="mb-3">{{ post.title }}</h1>
+    <p class="text-muted">Đăng bởi: {{ post.author }}</p>
+    <div class="post-content mb-4">
+        <p>{{ post.content }}</p>
+
+        {% if post.media_urls %}
+        <div class="media-container mt-3">
+            {% for media_url in post.media_urls %}
+            {% if media_url.endswith(('.png', '.jpg', '.jpeg', '.gif')) %}
+            <img src="{{ media_url }}" class="img-fluid mb-2" alt="Media" style="max-width: 100%; height: auto;">
+            {% elif media_url.endswith(('.mp4', '.mov')) %}
+            <video controls class="img-fluid mb-2" style="max-width: 100%; height: auto;">
+                <source src="{{ media_url }}" type="video/{{ media_url.split('.')[-1] }}">
+                Trình duyệt của bạn không hỗ trợ thẻ video.
+            </video>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    {% if session.username == post.author %}
+    <h2 class="mb-3">Chỉnh Sửa Bài Viết</h2>
+    <form method="POST" action="{{ url_for('edit_post', post_id=post.id) }}" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="title" class="form-label">Tiêu đề:</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ post.title }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label">Nội dung:</label>
+            <textarea class="form-control" id="content" name="content" rows="10" required>{{ post.content }}</textarea>
+        </div>
+        {% if post.media_urls %}
+        <div class="mb-3">
+            <label class="form-label">File đa phương tiện hiện có:</label>
+            <div class="media-preview-container">
+                {% for media_url in post.media_urls %}
+                {% if media_url.endswith(('.png', '.jpg', '.jpeg', '.gif')) %}
+                <img src="{{ media_url }}" class="img-thumbnail me-2 mb-2" alt="Media"
+                    style="max-width: 150px; height: auto;">
+                {% elif media_url.endswith(('.mp4', '.mov')) %}
+                <video controls class="img-thumbnail me-2 mb-2" style="max-width: 150px; height: auto;">
+                    <source src="{{ media_url }}" type="video/{{ media_url.split('.')[-1] }}">
+                </video>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="mb-3">
+            <label for="media_files" class="form-label">Thêm ảnh/video mới (tùy chọn):</label>
+            <input type="file" class="form-control" id="media_files" name="media_files" multiple
+                accept="image/*,video/*">
+            <small class="form-text text-muted">Các file mới sẽ được thêm vào các file hiện có. Kích thước tối đa {{
+                config['MAX_CONTENT_LENGTH'] / (1024*1024) }}MB.</small>
+        </div>
+
+        <button type="submit" class="btn btn-success me-2">Cập nhật Bài viết</button>
+    </form>
+
+    <form method="POST" action="{{ url_for('delete_post_route', post_id=post.id) }}" class="d-inline">
+        <button type="submit" class="btn btn-danger"
+            onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này không?');">Xóa Bài viết</button>
+    </form>
+    {% endif %}
+
+    <hr class="my-4">
+
+    <h2 class="mb-3">Bình luận</h2>
+    {% if post.comments %}
+    <div class="comments-list">
+        {% for comment in post.comments %}
+        <div class="card mb-2">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">{{ comment.author }}</h6>
+                <p class="card-text">{{ comment.text }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>Chưa có bình luận nào. Hãy là người đầu tiên!</p>
+    {% endif %}
+
+    {% if session.username %}
+    <h3 class="mt-4">Thêm Bình luận</h3>
+    <form method="POST" action="{{ url_for('add_comment_route', post_id=post.id) }}">
+        <div class="mb-3">
+            <textarea class="form-control" name="comment_text" rows="3" placeholder="Viết bình luận của bạn..."
+                required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Gửi Bình luận</button>
+    </form>
+    {% else %}
+    <p class="mt-4">Đăng nhập để bình luận.</p>
+    {% endif %}
+</div>
+{% endblock %}

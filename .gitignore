@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+lib/
+lib64/
+Python.vcproj
+.idea/
+.vscode/
+
+# Flask
+instance/
+
+# Dữ liệu của bạn
+users.json
+posts.json
+
+# Uploads
+static/uploads/
+
+# Các file nhật ký
+*.log

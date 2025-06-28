@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Tạo Bài Viết Mới{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Tạo Bài Viết Mới</h1>
+<form method="POST" action="{{ url_for('new_post') }}" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="title" class="form-label">Tiêu đề:</label>
+        <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+    <div class="mb-3">
+        <label for="content" class="form-label">Nội dung:</label>
+        <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="media_files" class="form-label">Tải lên ảnh/video (tùy chọn):</label>
+        <input type="file" class="form-control" id="media_files" name="media_files" multiple accept="image/*,video/*">
+        <small class="form-text text-muted">Chỉ chấp nhận file ảnh (png, jpg, jpeg, gif) và video (mp4, mov). Kích thước
+            tối đa {{ config['MAX_CONTENT_LENGTH'] / (1024*1024) }}MB.</small>
+    </div>
+    <button type="submit" class="btn btn-primary">Đăng Bài Viết</button>
+</form>
+{% endblock %}
