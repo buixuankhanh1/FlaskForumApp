@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 from typing import List, Optional, Dict, Union, Any
 
 app = Flask(__name__)
-app.secret_key = 'your_super_secret_key' # Thay thế bằng một khóa bí mật phức tạp hơn trong thực tế
+app.secret_key = os.environ.get('SECRET_KEY', 'default_secret_key_for_development')
 
 # Cấu hình tải lên file
 UPLOAD_FOLDER = 'static/uploads'
@@ -222,4 +222,6 @@ def logout() -> WerkzeugResponse: # Sử dụng WerkzeugResponse
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Đảm bảo debug=False khi triển khai lên production
+    # Render sẽ tự động đặt môi trường là 'production' hoặc bạn có thể dùng biến env
+    app.run(debug=os.environ.get('FLASK_ENV') == 'development')
